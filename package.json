@@ -1,0 +1,11 @@
+{
+  "name": "rafz-web-extractor-vercel",
+  "version": "1.1.0",
+  "private": true,
+  "engines": { "node": ">=20.x" },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "cheerio": "^1.0.0",
+    "ipaddr.js": "^2.2.0"
+  }
+}
