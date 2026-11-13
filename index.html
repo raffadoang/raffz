@@ -1,0 +1,2054 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff1c9">
+<title>Raffz</title>
+<!-- Proteksi tampilan salinan: aplikasi hanya tampil di domain produksi. -->
+<style>
+/* Default tertutup: file lokal/content:// dan domain lain hanya menampilkan putih. */
+html:not(.raffz-production-allowed),
+html:not(.raffz-production-allowed) body{
+  background:#fff!important;
+  background-image:none!important;
+}
+html:not(.raffz-production-allowed) body{
+  display:none!important;
+  visibility:hidden!important;
+}
+
+/* GLOBAL CHAT POLISH: compact typography, no pinch zoom, tactile buttons */
+html, body {
+  touch-action: pan-y;
+  -ms-touch-action: pan-y;
+}
+button, .btn, .chat-back, .attach-btn, .send-round, .navbtn,
+.global-chat-entry, .person-row {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.chat-room-title { font-size: clamp(17px, 4.5vw, 23px); letter-spacing: -.35px; }
+.online-pill { font-size: 11px; padding: 4px 11px; }
+.chat-name { font-size: 12px; }
+.chat-time { font-size: 10px; }
+.msg {
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 9px 11px;
+  border-width: 2px;
+  box-shadow: 2px 3px 0 #171717;
+}
+.msg-content { font-size: 13px; }
+.reply-quote { font-size: 11px; }
+.reply-quote strong { font-size: 10px; }
+.chat-input { font-size: 14px; }
+.attach-btn, .send-round, .chat-back {
+  transition: transform .11s ease, box-shadow .11s ease, filter .11s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.attach-btn:active, .send-round:active, .chat-back:active,
+.btn:active, .iconbtn:active, .navbtn:active,
+.global-chat-entry:active, .person-row:active {
+  transform: translate(3px, 4px) scale(.97);
+  box-shadow: 0 0 0 #171717 !important;
+  filter: brightness(.94);
+}
+.attach-btn:focus-visible, .send-round:focus-visible,
+.chat-back:focus-visible, button:focus-visible {
+  outline: 2px solid #2455c7;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .attach-btn, .send-round, .chat-back, .btn, .iconbtn,
+  .navbtn, .global-chat-entry, .person-row {
+    transition: none;
+  }
+}
+
+
+/* PROFILE PAGE — layout matched to the supplied two reference screens */
+#profile.page{padding-bottom:18px}
+.profile-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:8px 0 27px}
+.profile-brand{display:inline-flex;align-items:center;justify-content:center;min-width:105px;padding:7px 20px;border:3px solid #171717;border-radius:19px;background:#ffda48;color:#171717;font-size:25px;font-weight:1000;box-shadow:3px 4px 0 #171717}
+.profile-tools{display:flex;align-items:center;gap:8px}
+.profile-tool{width:49px;height:49px;border:3px solid #171717;border-radius:15px;box-shadow:3px 4px 0 #171717;font-size:23px;font-weight:1000;color:#171717}
+.profile-tool.sun{background:#ffda48}
+.profile-tool.mute{background:#8de8a5}
+.profile-tool.drop{background:#48c8f5}
+.profile-tool.bell{background:#48c8f5}
+.profile-tool.exit{background:#3988f5}
+.profile-shortcuts{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:24px}
+.profile-shortcut{min-height:69px;border:3px solid #171717;border-radius:17px;box-shadow:4px 5px 0 #171717;font-size:clamp(15px,4vw,23px);font-weight:1000;color:#171717}
+.profile-shortcut.settings{background:#ffda48}
+.profile-shortcut.language{display:flex;align-items:center;justify-content:center;gap:10px;background:#55c5f5;white-space:nowrap}
+.profile-shortcut.language b{display:inline-grid;place-items:center;width:29px;height:24px;border-radius:20px;background:#171717;color:white;font-size:12px}
+.language-chevron{font-size:22px;margin-left:3px}
+.profile-locked-card,.profile-section-card{background:#fff;border:3px solid #171717;border-radius:23px;box-shadow:5px 6px 0 #171717;color:#171717}
+.profile-locked-card{min-height:465px;padding:60px 24px 38px;text-align:center;display:flex;align-items:center;flex-direction:column;justify-content:flex-start}
+.profile-lock-icon{font-size:65px;line-height:1;margin-bottom:23px;color:#666;transform:rotate(180deg)}
+.profile-locked-card h2{font-size:24px;margin:0 0 14px;font-weight:1000}
+.profile-locked-card>p:not(.note){max-width:470px;margin:0 auto 28px;color:#666;font-size:15px;line-height:1.5;font-weight:700}
+.profile-login-btn{width:min(100%,270px);min-height:68px;border:3px solid #171717;border-radius:22px;background:#3988f5;color:#111;font-weight:1000;font-size:16px;box-shadow:5px 6px 0 #171717;margin-bottom:32px}
+.profile-register-line{font-size:15px;color:#555;font-weight:700}
+.profile-register-line button{padding:0;border:0;background:none;color:#65a9e9;text-decoration:underline;font-weight:900;font-size:15px}
+.profile-authenticated{display:grid;gap:25px}
+.profile-section-card{padding:36px 38px}
+.profile-section-card h2{margin:0 0 26px;font-size:23px;font-weight:1000}
+.profile-photo-card{display:flex;align-items:center;flex-direction:column}
+.profile-photo-card h2{align-self:flex-start;width:100%;margin-bottom:28px}
+.profile-large-preview{width:148px;height:148px;border:4px solid #171717;border-radius:50%;object-fit:cover;margin:0 auto 23px}
+.profile-photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:13px;width:100%}
+.profile-photo-actions button{min-height:66px;border:3px solid #171717;border-radius:21px;box-shadow:4px 5px 0 #171717;font-size:15px;font-weight:1000;color:#171717}
+.profile-upload-btn{background:#fff}
+.profile-delete-btn{background:#ff4d55}
+.profile-account-card h2{margin-bottom:30px}
+.profile-account-card label{display:block;margin:18px 0 9px;font-size:12px;font-weight:1000;letter-spacing:.8px}
+.profile-account-input{height:72px;border:3px solid #555;border-radius:19px;padding:0 23px;font-size:16px;font-weight:700;box-shadow:3px 4px 0 #777;margin:0 0 4px;background:#fff;color:#222}
+.profile-account-input:read-only{color:#555}
+.profile-save-btn{width:100%;min-height:72px;margin-top:19px;border:3px solid #171717;border-radius:19px;background:#3988f5;color:#111;font-size:14px;font-weight:1000;box-shadow:4px 5px 0 #171717}
+.profile-status-inline{min-height:14px;margin:10px 0 0}
+.profileStatus{margin-top:14px}
+#profile .profile-tool:active,#profile .profile-shortcut:active,#profile .profile-login-btn:active,
+#profile .profile-photo-actions button:active,#profile .profile-save-btn:active{
+  transform:translate(3px,4px) scale(.985);box-shadow:0 0 0 #171717;filter:brightness(.96)
+}
+body.dark .profile-locked-card,body.dark .profile-section-card{background:#fff;color:#171717}
+body.dark .profile-account-input{background:#fff;color:#222}
+@media(max-width:420px){
+  .profile-toolbar{gap:7px;margin:7px 0 26px}
+  .profile-brand{min-width:100px;font-size:23px;padding:7px 16px}
+  .profile-tools{gap:6px}
+  .profile-tool{width:43px;height:47px;font-size:20px}
+  .profile-shortcuts{gap:12px;margin-bottom:23px}
+  .profile-shortcut{min-height:70px;padding:6px 8px}
+  .profile-shortcut.language{gap:7px}
+  .profile-locked-card{min-height:465px;padding:63px 19px 35px}
+  .profile-section-card{padding:36px 28px}
+  .profile-section-card h2{font-size:22px}
+  .profile-large-preview{width:148px;height:148px}
+  .profile-photo-actions{gap:12px}
+  .profile-photo-actions button{min-height:66px;font-size:13px;padding:7px}
+  .profile-account-input{height:72px;font-size:15px}
+}
+@media(max-width:360px){
+  .profile-tool{width:38px;height:43px}
+  .profile-brand{min-width:88px}
+  .profile-shortcut{font-size:14px}
+}
+
+
+/* INDONESIA NEWS CAROUSEL */
+.news-heading-wrap{display:flex;justify-content:center;margin:48px 0 17px}
+.news-heading-pill{display:inline-flex;align-items:center;justify-content:center;min-width:120px;padding:10px 20px;border:3px solid #171717;border-radius:22px;background:#51c9f5;color:#171717;font-size:18px;font-weight:1000;box-shadow:3px 4px 0 #171717}
+.news-panel{margin:0 0 44px;padding:25px 20px 18px;background:#fff9e6;border:3px solid #171717;border-radius:27px;box-shadow:5px 6px 0 #171717;color:#171717;overflow:hidden}
+.news-panel h2{margin:0 0 20px 4px;font-size:24px;line-height:1.2;font-weight:1000;color:#171717}
+.news-slider{display:flex;gap:14px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 9px}
+.news-slider::-webkit-scrollbar{display:none}
+.news-card{flex:0 0 100%;min-width:0;display:grid;grid-template-columns:minmax(92px,36%) minmax(0,1fr);gap:13px;align-items:stretch;padding:12px;background:#ffe875;border:3px solid #171717;border-radius:20px;box-shadow:3px 4px 0 #171717;color:#171717;text-decoration:none;scroll-snap-align:center;min-height:185px;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.news-card:active{transform:translate(2px,3px) scale(.99);box-shadow:0 0 0 #171717}
+.news-image-wrap{width:100%;height:100%;min-height:145px;overflow:hidden;border:3px solid #171717;border-radius:16px;background:#222;display:grid;place-items:center}
+.news-image{width:100%;height:100%;min-height:145px;object-fit:cover;display:block}
+.news-no-image{color:#fff;font-size:35px}
+.news-copy{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.news-source{display:inline-flex;align-items:center;max-width:100%;padding:5px 12px;border-radius:20px;background:#171717;color:#fff;font-size:11px;line-height:1.2;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.news-headline{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;color:#171717;font-size:clamp(14px,3.8vw,19px);line-height:1.27;font-weight:1000;overflow-wrap:anywhere}
+.news-meta{margin-top:auto;color:#302d22;font-size:11px;line-height:1.35;font-weight:800}
+.news-progress{height:5px;margin:14px 0 9px;background:#e7dfc6;border-radius:20px;overflow:hidden}
+.news-progress span{display:block;width:0;height:100%;background:#3988f5;transition:width .2s ease}
+.news-dots{display:flex;justify-content:center;align-items:center;gap:7px;width:max-content;max-width:100%;margin:0 auto;padding:8px 13px;background:#171717;border-radius:30px;overflow-x:auto;scrollbar-width:none}
+.news-dots::-webkit-scrollbar{display:none}
+.news-dot{flex:0 0 14px;width:14px;height:14px;padding:0;border:0;border-radius:50%;background:#777;cursor:pointer}
+.news-dot.active{background:#fff;box-shadow:0 0 0 2px #aaa}
+.news-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:26px;margin-top:10px;color:#777;font-size:10px;font-weight:700}
+.news-footer button{width:30px;height:30px;border:2px solid #171717;border-radius:10px;background:#51c9f5;color:#171717;font-size:20px;font-weight:1000;box-shadow:2px 2px 0 #171717}
+.news-loading,.news-error{width:100%;padding:28px 12px;text-align:center;color:#555;font-weight:800;font-size:14px}
+.news-error button{display:block;margin:13px auto 0;padding:9px 16px;border:2px solid #171717;border-radius:12px;background:#51c9f5;font-weight:900}
+@media(max-width:420px){
+  .news-panel{padding:24px 18px 17px}
+  .news-panel h2{font-size:23px}
+  .news-card{grid-template-columns:minmax(90px,37%) minmax(0,1fr);gap:10px;min-height:174px;padding:10px}
+  .news-image-wrap,.news-image{min-height:145px}
+  .news-headline{font-size:15px;-webkit-line-clamp:4}
+  .news-meta{font-size:10px}
+  .news-dot{flex-basis:13px;width:13px;height:13px}
+  .news-dots{gap:6px;padding:8px 11px}
+}
+@media(max-width:350px){
+  .news-card{grid-template-columns:34% minmax(0,1fr);gap:8px;padding:8px}
+  .news-image-wrap,.news-image{min-height:132px}
+  .news-headline{font-size:13px}
+}
+
+
+/* MEMBER + ONLINE moved inside the SOSMED OWNER card */
+.owner-stats-divider{width:100%;border-top:4px dashed #171717;margin:18px 0 22px}
+.owner-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin:0 0 20px}
+.owner-stat{min-width:0;min-height:102px;padding:17px 18px 12px;border:3px solid #171717;border-radius:21px;background:#fff8e3;box-shadow:3px 4px 0 #171717;color:#171717}
+.owner-stat .label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:1000;letter-spacing:.4px}
+.owner-stat .value{margin-top:12px;text-align:center;font-size:25px;line-height:1.1;font-weight:1000;color:#171717}
+.online-led{display:inline-block;width:10px;height:10px;border-radius:50%;background:#19b66a;border:1px solid #171717}
+@media(max-width:380px){
+  .owner-stats{gap:9px}
+  .owner-stat{padding:14px 12px;min-height:94px}
+  .owner-stat .label{font-size:11px}
+}
+
+
+/* GLOBAL BROADCAST NOTIFICATIONS */
+.profile-tool.bell{position:relative;display:grid;place-items:center}.bell-icon{width:25px;height:25px;display:block}
+.notification-badge{position:absolute;right:-7px;top:-8px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;border:2px solid #171717;border-radius:20px;background:#ff4d55;color:#fff;font-size:10px;font-weight:1000}
+.notification-overlay[hidden],.admin-broadcast-form[hidden]{display:none!important}
+.notification-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55)}
+.notification-dialog{width:min(100%,520px);max-height:min(82vh,760px);overflow:auto;padding:22px;background:#fff9e6;border:3px solid #171717;border-radius:24px;box-shadow:6px 7px 0 #171717;color:#171717}
+.notification-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.notification-dialog-head h2{margin:0;font-size:23px;font-weight:1000}
+.notification-close{width:40px;height:40px;border:3px solid #171717;border-radius:13px;background:#ffda48;font-size:25px;font-weight:1000;box-shadow:2px 3px 0 #171717}
+.notification-admin-label{margin:0 0 15px;font-size:12px;font-weight:1000;letter-spacing:.5px}
+.admin-broadcast-form label{display:block;margin:12px 0 6px;font-size:12px;font-weight:1000}
+.admin-broadcast-form input,.admin-broadcast-form textarea{width:100%;padding:13px;border:2px solid #171717;border-radius:13px;background:#fff;color:#171717;font:inherit;font-size:14px;resize:vertical}
+.broadcast-send-btn{width:100%;min-height:52px;margin-top:14px;border:3px solid #171717;border-radius:15px;background:#51c9f5;color:#171717;font-size:14px;font-weight:1000;box-shadow:3px 4px 0 #171717}
+.broadcast-send-btn:disabled{opacity:.6}
+.notification-status{min-height:17px;margin:9px 0 0;font-size:12px;font-weight:800}
+.notification-divider{margin:17px 0;border-top:3px dashed #171717}
+.notification-list{display:grid;gap:11px}
+.notification-item{padding:14px;border:2px solid #171717;border-radius:15px;background:#fff;box-shadow:2px 3px 0 #171717}
+.notification-item strong{display:block;margin-bottom:6px;font-size:15px}
+.notification-item p{margin:0;color:#333;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.notification-item small{display:block;margin-top:9px;color:#777;font-size:10px;font-weight:800}
+.notification-empty{padding:20px 8px;text-align:center;color:#777;font-size:13px;font-weight:800}
+@media(max-width:390px){.notification-dialog{padding:18px}.notification-dialog-head h2{font-size:21px}}
+
+</style>
+<script>
+(function(){
+  'use strict';
+  try {
+    var host = (window.location.hostname || '').toLowerCase();
+    if (host === 'raffz.vercel.app') {
+      document.documentElement.classList.add('raffz-production-allowed');
+    }
+  } catch (e) {
+    /* Tetap tertutup jika pemeriksaan lokasi gagal. */
+  }
+})();
+</script>
+<style>
+:root{
+  --bg:#fff1c9;--card:#fffdf7;--ink:#171717;--blue:#3988f5;
+  --yellow:#ffda48;--cream:#fff7df;--shadow:5px 6px 0 #171717;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding-bottom:95px;color:var(--ink);font-family:Arial,sans-serif;
+  background-color:var(--bg);
+  background-image:radial-gradient(#e8d9ad 1.8px,transparent 1.8px);
+  background-size:22px 22px;
+}
+body.dark{
+  --bg:#17191f;--card:#242832;--ink:#f5f2eb;
+  --blue:#3c91ff;--yellow:#e8bd42;--cream:#303642;
+  --shadow:5px 6px 0 #08090c;
+  background-image:radial-gradient(#343a47 1.8px,transparent 1.8px);
+}
+button,input,textarea{font:inherit}
+.app{max-width:760px;margin:auto;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:8px 0 25px}
+.logo{
+  font-size:26px;font-weight:1000;background:var(--yellow);
+  border:3px solid var(--ink);border-radius:16px;padding:8px 20px;
+  box-shadow:3px 4px 0 var(--ink)
+}
+.iconbtn{
+  width:45px;height:45px;border:3px solid var(--ink);
+  border-radius:14px;background:var(--blue);font-size:21px;
+  box-shadow:3px 4px 0 var(--ink);cursor:pointer
+}
+.welcome{
+  background:white;color:#171717;border:3px solid #171717;
+  border-radius:24px;padding:24px 15px;text-align:center;
+  box-shadow:5px 6px 0 #171717;transform:rotate(-1deg);
+  animation:welcome .7s ease both
+}
+.welcome h1{font-size:clamp(28px,7vw,45px);color:#2455c7;min-height:2.2em}
+.cursor{display:inline-block;width:3px;height:30px;background:#2455c7;animation:blink .7s infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes welcome{from{opacity:0;transform:translateY(20px) rotate(-4deg)}to{opacity:1;transform:rotate(-1deg)}}
+.title{
+  display:table;margin:25px auto 15px;background:#48c8f5;
+  border:3px solid var(--ink);border-radius:30px;padding:9px 22px;
+  font-weight:1000;box-shadow:3px 4px 0 var(--ink)
+}
+.card{
+  background:var(--card);border:3px solid var(--ink);
+  border-radius:21px;padding:17px;margin:13px 0;
+  box-shadow:var(--shadow)
+}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{
+  background:var(--cream);border:3px solid var(--ink);
+  border-radius:18px;padding:14px;box-shadow:3px 4px 0 var(--ink)
+}
+.label{font-size:12px;font-weight:900;letter-spacing:1px}
+.value{text-align:center;font-size:25px;font-weight:1000;margin-top:10px}
+.owner{display:flex;align-items:center;gap:13px}
+.avatar{
+  width:75px;height:75px;flex-shrink:0;border:3px solid var(--ink);
+  border-radius:50%;display:grid;place-items:center;
+  background:#171717;color:white;font-size:25px;font-weight:1000;
+  object-fit:cover
+}
+.owner-name{font-size:21px;font-weight:1000}
+.verified{
+  position:relative;display:inline-block;width:23px;height:23px;
+  margin-left:3px;vertical-align:middle;flex-shrink:0;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));
+}
+.verified::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(145deg,#2994ff,#0866ff);
+  clip-path:polygon(50% 0%,58% 7%,69% 3%,76% 12%,88% 12%,91% 24%,100% 32%,96% 44%,100% 55%,93% 64%,95% 77%,83% 82%,78% 94%,66% 92%,57% 100%,47% 94%,35% 98%,28% 87%,16% 86%,14% 74%,3% 67%,7% 55%,0% 45%,7% 35%,4% 23%,16% 18%,22% 7%,35% 9%,43% 1%);
+}
+.verified::after{
+  content:"";position:absolute;width:6px;height:10px;
+  left:8px;top:4px;border-right:3px solid white;
+  border-bottom:3px solid white;transform:rotate(45deg);
+  border-radius:1px;
+}
+.quote{background:#fff09b;border:2px solid #171717;border-radius:13px;padding:10px;margin-top:8px;font-weight:bold}
+.social{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--cream);color:var(--ink);text-decoration:none;
+  border:3px solid var(--ink);border-radius:17px;padding:13px;
+  margin-top:14px;font-weight:900;box-shadow:3px 4px 0 var(--ink)
+}
+.social-left{display:flex;align-items:center;gap:12px}
+.tiktok{
+  width:46px;height:46px;display:grid;place-items:center;
+  border:3px solid #171717;border-radius:13px;background:white;
+  box-shadow:2px 2px 0 #171717
+}
+.tiktok svg{width:29px;height:29px}
+.btn{
+  border:3px solid var(--ink);border-radius:13px;padding:11px 15px;
+  background:var(--yellow);color:#171717;font-weight:1000;
+  box-shadow:3px 4px 0 var(--ink);cursor:pointer;
+  transition:transform .12s,box-shadow .12s
+}
+.btn.blue{background:#48c8f5}
+.btn.black{background:#171717;color:white}
+.btn:active,.iconbtn:active,.navbtn:active{transform:translate(3px,4px);box-shadow:0 0 0 var(--ink)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.field{
+  width:100%;border:2px solid var(--ink);border-radius:12px;
+  padding:12px;background:#fffef9;color:#171717;outline:none;margin:6px 0
+}
+textarea.field{resize:vertical}
+.page{display:none}
+.page.active{display:block}
+.note{font-size:12px;line-height:1.5;color:#8a806d}
+body.dark .note{color:#c2c7d0}
+.chatbox{
+  height:330px;overflow-y:auto;background:#fffef9;color:#171717;
+  border:2px solid var(--ink);border-radius:14px;padding:10px;margin:12px 0
+}
+.msg{padding:10px;border:1.5px solid #d7cba9;border-radius:13px;margin:8px 0;overflow-wrap:anywhere}
+.msg.mine{background:#fff4c9}
+.chat-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.chat-avatar{width:34px;height:34px;border:2px solid #171717;border-radius:50%;object-fit:cover;background:#eee}
+.chat-name{font-size:13px;font-weight:900}
+.chat-time{font-size:10px;color:#8a806d}
+.chatrow{display:flex;gap:8px}
+.chatrow input{flex:1;min-width:0}
+.online{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:900}
+.dot{width:9px;height:9px;border-radius:50%;background:#19b76a}
+.profile-preview{width:90px;height:90px;border:3px solid var(--ink);border-radius:50%;object-fit:cover;background:#eee}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.code{width:100%;min-height:210px;display:block;position:relative;z-index:1;pointer-events:auto;user-select:text;-webkit-user-select:text;touch-action:pan-y;background:#171717;color:#fff;border:2px solid #171717;border-radius:13px;padding:12px;font:12px/1.5 monospace;cursor:text;outline-offset:3px}
+#source:focus{outline:2px solid #3988f5}
+.preview{width:100%;height:230px;border:2px solid var(--ink);border-radius:13px;background:white;margin-top:12px}
+.nav{
+  position:fixed;z-index:10;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(100%,760px);display:grid;grid-template-columns:repeat(4,1fr);
+  gap:5px;background:var(--card);border:4px solid var(--ink);
+  border-bottom:0;border-radius:23px 23px 0 0;padding:9px 7px calc(9px + env(safe-area-inset-bottom))
+}
+.navbtn{
+  border:2px solid transparent;border-radius:14px;background:transparent;
+  color:var(--ink);font-weight:900;font-size:11px;padding:8px 2px;
+  display:flex;flex-direction:column;align-items:center;gap:4px
+}
+.navbtn .ico{font-size:22px}
+.navbtn.active{background:var(--blue);border:2px solid var(--ink);color:#171717;box-shadow:3px 3px 0 var(--ink)}
+.footer{text-align:center;padding:25px 0;font-size:11px;font-weight:bold;color:#8a806d}
+body.dark .card,body.dark .nav{background:#242832}
+body.dark .stat,body.dark .social{background:#303642;color:#f5f2eb}
+body.dark .field{background:#1b2029;color:#fff;border-color:#f5f2eb}
+body.dark .chatbox{background:#1b2029;color:#fff;border-color:#f5f2eb}
+body.dark .msg{border-color:#4a5362}
+body.dark .msg.mine{background:#3c4655}
+.toast{
+  position:fixed;z-index:9999;top:18px;left:50%;
+  transform:translate(-50%,-20px);width:max-content;
+  max-width:calc(100% - 30px);padding:13px 19px;
+  border:2px solid #171717;border-radius:13px;
+  background:#ffda48;color:#171717;font-size:13px;
+  font-weight:900;text-align:center;box-shadow:3px 4px 0 #171717;
+  opacity:0;visibility:hidden;transition:.25s;
+}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.toast.error{background:#ff7777}
+.toast.success{background:#8ee5a8}
+.google-btn{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  width:100%;background:white;color:#222;border:2px solid #171717;
+  border-radius:13px;padding:14px;font-weight:900;box-shadow:3px 4px 0 #171717;
+  cursor:pointer
+}
+.google-btn:active{transform:translate(3px,4px);box-shadow:none}
+.google-icon{width:21px;height:21px}
+
+/* GLOBAL CHAT REDESIGN */
+.chat-page-head{margin:-16px -16px 18px;padding:15px 18px;background:#55c5f5;border-bottom:3px solid var(--ink);font-size:23px;font-weight:1000}
+.chat-list-wrap{padding:0 0 20px}
+.global-chat-entry{display:flex;align-items:center;gap:14px;width:100%;padding:14px;background:#ffda48;color:#171717;border:3px solid #171717;border-radius:17px;box-shadow:4px 5px 0 #171717;text-align:left;cursor:pointer;margin:0 0 16px}
+.global-chat-entry:active{transform:translate(3px,4px);box-shadow:0 0 0 #171717}
+.global-chat-globe{width:50px;height:50px;flex:0 0 50px;border:3px solid #171717;border-radius:50%;display:grid;place-items:center;font-size:25px}
+.global-chat-entry strong{display:block;font-size:14px;font-weight:1000}
+.global-chat-entry small{display:block;margin-top:3px;color:#5f553c;font-size:12px}
+.chat-room-head{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.chat-back{border:2px solid var(--ink);border-radius:11px;background:var(--blue);color:#171717;font-weight:1000;padding:8px 12px;box-shadow:2px 3px 0 var(--ink)}
+.chat-room-title{font-size:20px;font-weight:1000}
+.chatbox{height:min(55vh,520px);min-height:300px;background:#fffef9}
+.msg{background:#fff;color:#171717;border:2px solid #171717;max-width:88%;width:fit-content;min-width:45%;box-shadow:2px 2px 0 rgba(0,0,0,.08)}
+.msg.mine{margin-left:auto;background:#3988f5;color:#fff;border-color:#171717}
+.msg.admin-message{background:#ffdf63;color:#171717;border-color:#171717}
+.msg.mine.admin-message{background:#3988f5;color:#fff}
+.msg .chat-time{color:#777}
+.msg.mine .chat-time{color:#eaf2ff}
+.msg.admin-message .chat-time{color:#74602a}
+.admin-name{display:inline-flex;align-items:center;gap:5px;font-weight:1000}
+.admin-name .verified{width:17px;height:17px;margin-left:0}
+.admin-name .verified::after{width:4px;height:7px;left:6px;top:3px;border-right-width:2px;border-bottom-width:2px}
+body.dark .global-chat-entry{background:#e8bd42;color:#171717}
+body.dark .global-chat-entry small{color:#5f553c}
+body.dark .msg{background:#fff;color:#171717}
+body.dark .msg.mine{background:#3988f5;color:#fff}
+body.dark .msg.admin-message{background:#ffdf63;color:#171717}
+@media(max-width:390px){.chat-page-head{margin:-12px -12px 16px}}
+
+@media(max-width:390px){.app{padding:12px}.two{gap:8px}.stat{padding:11px 8px}}
+
+/* GLOBAL CHAT — reference-inspired full-screen room */
+.chat-page-head{margin:-16px -16px 18px;padding:15px 18px;background:#55c5f5;border-bottom:3px solid #171717;color:#101010}
+.chat-room-head{
+  display:flex;align-items:center;gap:13px;
+  margin:-16px -16px 0;padding:13px 16px;
+  min-height:102px;background:#55c5f5;border-bottom:4px solid #171717;color:#111;
+}
+.chat-back{width:50px;height:50px;padding:0;font-size:32px;line-height:1;background:#fff;border:3px solid #171717;border-radius:14px;box-shadow:3px 4px 0 #171717}
+.room-globe{width:58px;height:58px;flex:0 0 58px;border:3px solid #171717;border-radius:50%;background:#ffda48;display:grid;place-items:center;font-size:28px;box-shadow:2px 3px 0 #171717}
+.room-heading{min-width:0;flex:1}
+.chat-room-title{font-size:clamp(20px,5.4vw,30px);font-weight:1000;letter-spacing:-.6px;white-space:nowrap}
+.online-pill{display:inline-flex;margin-top:2px;padding:5px 15px;border:2px solid #171717;border-radius:30px;background:#3988f5;color:#101010;font-size:12px;font-weight:1000;box-shadow:2px 3px 0 #171717}
+.logout-room{padding:8px 10px;font-size:11px}
+.auth-card{margin:20px 0;padding:18px;background:var(--card);border:3px solid #171717;border-radius:18px;box-shadow:4px 5px 0 #171717}
+.chat-panel{margin:0}
+.chatbox{
+  height:calc(100dvh - 255px);min-height:260px;max-height:none;
+  overflow-y:auto;overscroll-behavior:contain;
+  margin:0 -16px;padding:12px 16px 18px;
+  border:0;border-radius:0;background:#fff1c9;color:#171717;
+  display:flex;flex-direction:column;gap:9px;
+  scrollbar-width:thin;
+}
+.msg{
+  display:block;width:fit-content;min-width:0;max-width:min(82%,430px);
+  margin:0;padding:11px 13px;background:#fff;color:#171717;
+  border:3px solid #171717;border-radius:19px;
+  box-shadow:3px 4px 0 #171717;font-size:15px;line-height:1.35;
+}
+.msg.mine{align-self:flex-end;margin-left:auto;background:#3988f5;color:#101010;border-color:#171717}
+.msg.admin-message{background:#fff09a;color:#171717;border-color:#171717}
+.msg.mine.admin-message{background:#3988f5;color:#101010}
+.chat-head{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.chat-avatar{width:38px;height:38px;flex:0 0 38px;border:2px solid #171717;border-radius:50%;object-fit:cover;background:#ffda48}
+.chat-head>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.chat-name{font-size:13px;font-weight:1000}
+.chat-time{font-family:monospace;font-size:11px;font-weight:900;color:#625d4d}
+.msg.mine .chat-time{color:#102d59}
+.msg.admin-message .chat-time{color:#74602a}
+.admin-name{display:inline-flex;align-items:center;gap:5px}
+.admin-name .verified{width:17px;height:17px;margin:0}
+.admin-name .verified::after{width:4px;height:7px;left:6px;top:3px;border-right-width:2px;border-bottom-width:2px}
+.msg-content{overflow-wrap:anywhere;white-space:pre-wrap}
+.msg-attachment{display:block;max-width:100%;margin-top:8px;border:2px solid #171717;border-radius:12px}
+.msg-attachment.image{max-height:260px;object-fit:contain}
+.msg-attachment-link{display:inline-block;margin-top:8px;color:inherit;font-weight:900}
+.composer{
+  position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);
+  width:min(100%,760px);display:flex;align-items:center;gap:9px;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  background:#fffdf7;border-top:3px solid #171717;
+}
+.attach-wrap{position:relative;flex:0 0 58px}
+.attach-btn,.send-round{
+  width:56px;height:56px;border:3px solid #171717;border-radius:17px;
+  background:#48c8f5;color:#111;font-size:32px;font-weight:900;
+  box-shadow:3px 4px 0 #171717;cursor:pointer;
+}
+.send-round{flex:0 0 58px;width:58px;height:58px;border-radius:50%;background:#ffda48;font-size:27px}
+.chat-input{height:56px;min-width:0;flex:1;margin:0;padding:0 18px;border:3px solid #171717;border-radius:32px;background:#fff;color:#171717;font-weight:600;box-shadow:3px 4px 0 #171717}
+.attach-menu{
+  display:none;position:absolute;left:0;bottom:68px;width:150px;padding:8px;
+  background:#fff;border:3px solid #171717;border-radius:16px;box-shadow:4px 5px 0 #171717;
+}
+.attach-menu.open{display:grid;gap:4px}
+.attach-menu button{display:flex;align-items:center;gap:12px;padding:10px;border:0;border-radius:9px;background:#fff;color:#171717;font-weight:900;text-align:left}
+.attach-menu button:active{background:#ffed9a}
+.attach-menu button span{font-size:22px}
+.chat-status{margin:7px 0 78px}
+body.chatroom-open{padding-bottom:0;overflow-x:hidden}
+body.chatroom-open .app{padding:16px 16px 0}
+body.chatroom-open .top,body.chatroom-open .nav,body.chatroom-open .footer{display:none}
+body.chatroom-open #chatroom.active{display:block}
+body.dark .chatbox{background:#fff1c9}
+body.dark .composer{background:#242832}
+body.dark .chat-input{background:#fff;color:#171717}
+body.dark .auth-card{background:#242832}
+@media(max-width:390px){
+  .chat-room-head{margin:-12px -12px 0;padding:11px 12px;gap:9px;min-height:94px}
+  .room-globe{width:52px;height:52px;flex-basis:52px}
+  .chat-back{width:46px;height:46px}
+  .chatbox{height:calc(100dvh - 235px);margin:0 -12px;padding:10px 12px 16px}
+  .msg{max-width:86%;padding:10px 11px}
+  .composer{gap:7px;padding-left:12px;padding-right:12px}
+  .attach-wrap{flex-basis:55px}
+  .attach-btn{width:53px;height:53px}
+  .send-round{width:55px;height:55px;flex-basis:55px}
+  .chat-input{height:53px;padding:0 14px}
+  .logout-room{display:none}
+}
+
+
+/* MEMBER DIRECTORY + PRIVATE CHAT */
+.directory-title{margin:22px 2px 10px;font-size:13px;font-weight:1000;letter-spacing:.7px}
+.people-list{display:grid;gap:10px}
+.person-row{display:flex;align-items:center;gap:11px;width:100%;padding:11px;background:var(--card);color:var(--ink);border:2px solid #171717;border-radius:16px;box-shadow:3px 4px 0 #171717;text-align:left;cursor:pointer}
+.person-row:active{transform:translate(2px,3px);box-shadow:0 0 0 #171717}
+.person-row .chat-avatar{width:46px;height:46px;flex-basis:46px}
+.person-info{flex:1;min-width:0}
+.person-info strong{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.person-info small{display:block;color:#81765f;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:3px}
+.person-action{border:2px solid #171717;border-radius:10px;padding:7px 10px;background:#48c8f5;color:#171717;font-size:11px;font-weight:1000}
+.private-room-head{display:flex;align-items:center;gap:12px;margin:-16px -16px 0;padding:12px 16px;background:#55c5f5;border-bottom:3px solid #171717}
+.private-avatar{width:48px;height:48px;flex-basis:48px}
+.private-person{display:grid;gap:3px;min-width:0}
+.private-person strong{font-size:16px}
+.private-person small{font-size:11px;color:#29445a}
+.private-chatbox{height:calc(100dvh - 260px);min-height:250px}
+.private-composer{bottom:0}
+body.chatroom-open #privateRoomView{display:block}
+@media(max-width:390px){.private-room-head{margin:-12px -12px 0;padding:10px 12px}.private-chatbox{height:calc(100dvh - 245px)}}
+
+
+/* SWIPE-TO-REPLY + MEDIA IN GLOBAL AND PRIVATE CHAT */
+.reply-preview{
+  position:fixed;z-index:31;left:50%;bottom:78px;transform:translateX(-50%);
+  width:min(100%,760px);display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 16px;background:#fff09a;border:3px solid #171717;border-radius:15px 15px 0 0;
+  box-shadow:3px 0 0 #171717;color:#171717;
+}
+.reply-preview[hidden]{display:none}
+.reply-preview div{display:grid;gap:3px;min-width:0}
+.reply-preview strong{font-size:12px;font-weight:1000}
+.reply-preview small{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72vw}
+.reply-preview button{border:0;background:transparent;color:#171717;font-size:27px;font-weight:900}
+.reply-quote{
+  display:block;margin:0 0 8px;padding:7px 9px;border-left:4px solid #278cf5;
+  border-radius:7px;background:rgba(20,70,130,.12);font-size:12px;
+  cursor:pointer;overflow-wrap:anywhere;
+}
+.reply-quote strong{display:block;font-size:11px;margin-bottom:3px}
+.msg.swipe-ready{transition:transform .12s ease}
+.msg.swiping{transition:none;filter:brightness(.97)}
+.msg.highlight-message{outline:4px solid #ffbf24;outline-offset:2px}
+.msg-attachment-file{
+  display:flex;align-items:center;gap:10px;margin-top:8px;padding:10px;
+  border:2px solid #171717;border-radius:12px;background:rgba(255,255,255,.55);
+  color:inherit;text-decoration:none;font-weight:900;overflow-wrap:anywhere;
+}
+.msg-attachment-file span{font-size:25px}
+.private-composer{bottom:0}
+body.chatroom-open .private-chatbox{padding-bottom:100px}
+body.chatroom-open .private-composer{z-index:32}
+@media(max-width:390px){
+  .reply-preview{bottom:75px;padding:8px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+<div class="app">
+
+<header class="top">
+  <div class="logo">Raffz</div>
+  <button class="iconbtn" id="themeBtn">☾</button>
+</header>
+
+<section id="home" class="page active">
+  <div class="welcome">
+    <h1><span id="typed"></span><span class="cursor"></span></h1>
+  </div>
+  <div class="title">INFORMASI</div>
+  <div class="card">
+    <div class="label">◷ WAKTU & TANGGAL</div>
+    <div class="value" id="clock">--</div>
+  </div>
+  <div class="two">
+    <div class="stat">
+      <div class="label">▣ BATERAI</div>
+      <div class="value" id="battery">--</div>
+    </div>
+    <div class="stat">
+      <div class="label">▣ INFORMASI</div>
+      <div class="value">Finz</div>
+    </div>
+  </div>
+  <div class="news-heading-wrap">
+    <div class="news-heading-pill">BERITA</div>
+  </div>
+  <section class="news-panel" aria-label="Berita terbaru Indonesia">
+    <h2>Berita Terbaru</h2>
+    <div class="news-slider" id="indoNewsSlider" aria-live="polite">
+      <div class="news-loading">Memuat berita terbaru Indonesia...</div>
+    </div>
+    <div class="news-progress" aria-hidden="true"><span id="indoNewsProgress"></span></div>
+    <div class="news-dots" id="indoNewsDots" aria-label="Navigasi berita"></div>
+    <div class="news-footer">
+      <span id="indoNewsStatus">Menghubungkan ke sumber berita...</span>
+      <button id="indoNewsRefresh" type="button" aria-label="Muat ulang berita">↻</button>
+    </div>
+  </section>
+
+  <div class="title">SOSMED OWNER</div>
+  <div class="card">
+    <div class="owner">
+      <div class="avatar">R</div>
+      <div>
+        <div class="owner-name">Raffz <span class="verified"></span></div>
+        <div class="quote">Suatu hari, kamu akan berterima kasih pada dirimu sendiri.</div>
+      </div>
+    </div>
+    <div class="owner-stats-divider"></div>
+    <div class="owner-stats">
+      <div class="owner-stat">
+        <div class="label">♙ MEMBER</div>
+        <div class="value" id="totalUsers">—</div>
+      </div>
+      <div class="owner-stat">
+        <div class="label"><span class="online-led"></span> ONLINE</div>
+        <div class="value" id="onlineCount">0</div>
+      </div>
+    </div>
+    <a class="social" href="https://www.tiktok.com/@panggil.gw.rafz" target="_blank" rel="noopener">
+      <span class="social-left">
+        <span class="tiktok">
+          <svg viewBox="0 0 32 32">
+            <path d="M18 4v16.2a6.1 6.1 0 1 1-5-6V9.5a10.4 10.4 0 1 0 9.2 10.3V12c2 1.6 4.3 2.5 6.8 2.6V9.8c-3.4-.2-6.1-2.3-7.1-5.8H18z" fill="#25F4EE" transform="translate(-1 1)"/>
+            <path d="M18 4v16.2a6.1 6.1 0 1 1-5-6V9.5a10.4 10.4 0 1 0 9.2 10.3V12c2 1.6 4.3 2.5 6.8 2.6V9.8c-3.4-.2-6.1-2.3-7.1-5.8H18z" fill="#FE2C55" transform="translate(1 0)"/>
+            <path d="M18 4v16.2a6.1 6.1 0 1 1-5-6V9.5a10.4 10.4 0 1 0 9.2 10.3V12c2 1.6 4.3 2.5 6.8 2.6V9.8c-3.4-.2-6.1-2.3-7.1-5.8H18z" fill="#111"/>
+          </svg>
+        </span>
+        <span>TIKTOK OWNER<br><small>@panggil.gw.rafz</small></span>
+      </span>
+      ➜
+    </a>
+  </div>
+</section>
+
+<section id="gethtml" class="page">
+  <div class="title">GET HTML</div>
+  <div class="card">
+    <h2>Ambil Source Website</h2>
+    <p class="note">Masukkan URL website publik. Sistem akan mencoba mengambil HTML melalui server, lalu mengumpulkan CSS, JavaScript, gambar, font, ikon, dan media yang dapat diakses.</p>
+    <input class="field" id="urlInput" type="url" placeholder="https://contoh.com">
+    <button class="btn blue" id="fetchBtn" style="width:100%">AMBIL HTML</button>
+    <p class="note" id="extractStatus" aria-live="polite">Siap digunakan setelah website ini di-deploy ke Vercel.</p>
+    <textarea class="code" id="source" placeholder="Kode HTML akan muncul di sini..." aria-label="Kolom kode HTML" spellcheck="false"></textarea>
+    <div class="actions">
+      <button class="btn blue" id="copyBtn">COPY CODE</button>
+      <button class="btn" id="previewBtn">PREVIEW</button>
+      <button class="btn blue" id="downloadResultBtn">DOWNLOAD HASIL</button>
+    </div>
+    <iframe id="preview" class="preview" title="Preview HTML" sandbox=""></iframe>
+    <p class="note">Catatan: fitur ini mengambil konten publik yang dapat diakses. Halaman yang memerlukan login, CAPTCHA, paywall, atau menolak akses tidak akan ditembus. Halaman dinamis yang harus menjalankan JavaScript mungkin tidak seluruhnya tertangkap.</p>
+  </div>
+</section>
+
+<section id="chat" class="page">
+  <div class="chat-page-head">Chat</div>
+  <div class="chat-list-wrap">
+    <button class="global-chat-entry" id="openGlobalChat" type="button">
+      <span class="global-chat-globe">🌐</span>
+      <span><strong>GLOBAL CHAT</strong><small>Obrolan publik semua pengguna</small></span>
+    </button>
+  </div>
+</section>
+
+<section id="chatroom" class="page">
+  <div class="chat-room-head">
+    <button class="chat-back" id="backToChatList" type="button" aria-label="Kembali">‹</button>
+    <div class="room-globe">🌐</div>
+    <div class="room-heading">
+      <strong id="signedInAs" hidden>Pengguna</strong>
+      <div class="chat-room-title">GLOBAL CHAT</div>
+      <span class="online-pill"><span id="chatOnline">0 online</span></span>
+    </div>
+    <button class="btn logout-room" id="logoutBtn" type="button">LOGOUT</button>
+  </div>
+
+  <div id="authPanel" class="auth-card">
+    <p class="note">Login menggunakan akun Google untuk bergabung ke Global Chat.</p>
+    <button class="google-btn" id="googleLogin" type="button">
+      <svg class="google-icon" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.9c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.38 37.96 46.98 31.8 46.98 24.55z"/>
+        <path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.45-4.88 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      LOGIN DENGAN GOOGLE
+    </button>
+    <p class="note" id="authStatus">Belum login. Silakan masuk menggunakan Google.</p>
+  </div>
+
+  <div id="chatPanel" class="chat-panel" style="display:none">
+    <div id="globalRoomView">
+    <div class="chatbox" id="chatMessages">
+      <div class="msg">Memuat pesan...</div>
+    </div>
+    <div class="reply-preview" id="globalReplyPreview" hidden>
+      <div><strong>Balas pesan</strong><small id="globalReplyText"></small></div>
+      <button type="button" id="globalReplyCancel" aria-label="Batal membalas">×</button>
+    </div>
+    <div class="composer">
+      <div class="attach-wrap">
+        <button class="attach-btn" id="attachBtn" type="button" aria-label="Lampirkan">＋</button>
+        <div class="attach-menu" id="attachMenu">
+          <button type="button" id="photoPickBtn"><span>▧</span> Foto</button>
+          <button type="button" id="filePickBtn"><span>▤</span> File</button>
+        </div>
+        <input id="photoInput" type="file" accept="image/*" hidden>
+        <input id="fileInput" type="file" hidden>
+      </div>
+      <input class="field chat-input" id="chatText" maxlength="500" placeholder="Ketik pesan...">
+      <button class="send-round" id="sendBtn" type="button" aria-label="Kirim">➤</button>
+    </div>
+    <p class="note chat-status" id="chatStatus"></p>
+    </div>
+
+    <div id="privateRoomView" class="private-room" style="display:none">
+      <div class="private-room-head">
+        <button class="chat-back" id="backFromPrivate" type="button" aria-label="Kembali">‹</button>
+        <img id="privateAvatar" class="chat-avatar private-avatar" alt="">
+        <div class="private-person"><strong id="privateName">Member</strong><small>Pesan pribadi</small></div>
+      </div>
+      <div class="chatbox private-chatbox" id="privateMessages"><div class="msg">Memuat pesan...</div></div>
+      <div class="reply-preview" id="dmReplyPreview" hidden>
+        <div><strong>Balas pesan</strong><small id="dmReplyText"></small></div>
+        <button type="button" id="dmReplyCancel" aria-label="Batal membalas">×</button>
+      </div>
+      <div class="composer private-composer">
+        <div class="attach-wrap">
+          <button class="attach-btn" id="dmAttachBtn" type="button" aria-label="Lampirkan">＋</button>
+          <div class="attach-menu" id="dmAttachMenu">
+            <button type="button" id="dmPhotoPickBtn"><span>▧</span> Foto</button>
+            <button type="button" id="dmFilePickBtn"><span>▤</span> File</button>
+          </div>
+          <input id="dmPhotoInput" type="file" accept="image/*" hidden>
+          <input id="dmFileInput" type="file" hidden>
+        </div>
+        <input class="field chat-input" id="privateText" maxlength="2000" placeholder="Ketik pesan pribadi...">
+        <button class="send-round" id="privateSendBtn" type="button" aria-label="Kirim">➤</button>
+      </div>
+      <p class="note chat-status">Pesan ini hanya untuk kamu dan penerima.</p>
+    </div>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="profile-toolbar">
+    <div class="profile-tools">
+      <button class="profile-tool sun" id="profileThemeBtn" type="button" aria-label="Tema">☼</button>
+      <button class="profile-tool bell" id="openNotifications" type="button" aria-label="Notifikasi">
+        <svg class="bell-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="notificationBadge" class="notification-badge" hidden>0</span>
+      </button>
+      <button class="profile-tool exit" id="profileLogoutTop" type="button" aria-label="Keluar" style="display:none">⇥</button>
+    </div>
+  </div>
+
+  <div class="profile-shortcuts">
+    <button class="profile-shortcut settings" type="button">Pengaturan Akun</button>
+  </div>
+
+  <div class="profile-locked-card" id="profileLocked">
+    <div class="profile-lock-icon" aria-hidden="true">♙</div>
+    <h2>Akses Terbatas</h2>
+    <p>Silakan masuk atau daftar akun untuk mengelola profil dan pengaturan.</p>
+    <button class="profile-login-btn" id="goLogin" type="button">MASUK</button>
+    <div class="profile-register-line">Belum punya akun? <button id="profileRegister" type="button">Daftar sekarang</button></div>
+    <p class="note profileStatus" id="profileStatus"></p>
+  </div>
+
+  <div id="profilePanel" class="profile-authenticated" style="display:none">
+    <div class="profile-section-card profile-photo-card">
+      <h2>Profil</h2>
+      <img class="profile-preview profile-large-preview" id="profilePreview" alt="Foto profil">
+      <input id="profilePhotoFile" type="file" accept="image/*" hidden>
+      <div class="profile-photo-actions">
+        <button class="profile-upload-btn" id="profileUploadBtn" type="button">UPLOAD FOTO</button>
+        <button class="profile-delete-btn" id="profileDeleteBtn" type="button">Hapus Foto</button>
+      </div>
+      <p class="note profile-status-inline" id="profileStatusLoggedIn"></p>
+    </div>
+
+    <div class="profile-section-card profile-account-card">
+      <h2>Informasi Akun</h2>
+      <label for="profileName">USERNAME</label>
+      <input class="field profile-account-input" id="profileName" maxlength="24" placeholder="Username">
+      <label for="profileEmail">EMAIL</label>
+      <input class="field profile-account-input profile-email-input" id="profileEmail" type="email" readonly>
+      <input id="profileAvatar" type="hidden">
+      <textarea id="profileBio" hidden></textarea>
+      <button class="profile-save-btn" id="saveProfile" type="button">SIMPAN USERNAME</button>
+      <p class="note profile-status-inline" id="profileStatusAccount"></p>
+    </div>
+  </div>
+</section>
+
+<div class="footer">RAFFZ • ALL RIGHTS RESERVED</div>
+</div>
+
+<nav class="nav">
+  <button class="navbtn active" data-page="home"><span class="ico">⌂</span>HOME</button>
+  <button class="navbtn" data-page="gethtml"><span class="ico">⌘</span>GET HTML</button>
+  <button class="navbtn" data-page="chat"><span class="ico">▤</span>CHAT</button>
+  <button class="navbtn" data-page="profile"><span class="ico">♙</span>PROFILE</button>
+</nav>
+
+<script>
+const $=id=>document.getElementById(id);
+
+let toastTimer;
+function notify(message,type='success'){
+  const el=$('toast');
+  el.textContent=message;
+  el.className='toast show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+/* NAVIGATION */
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===(id==='chatroom'?'chat':id)));
+  document.body.classList.toggle('chatroom-open',id==='chatroom');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>goPage(b.dataset.page));
+$('openGlobalChat').onclick=()=>goPage('chatroom');
+$('backToChatList').onclick=()=>goPage('chat');
+$('goLogin').onclick=()=>loginGoogle($('goLogin'));
+
+/* DARK MODE */
+if(localStorage.getItem('raffz-theme')==='dark')document.body.classList.add('dark');
+function paintTheme(){$('themeBtn').textContent=document.body.classList.contains('dark')?'☀':'☾'}
+paintTheme();
+$('themeBtn').onclick=()=>{
+  document.body.classList.toggle('dark');
+  localStorage.setItem('raffz-theme',document.body.classList.contains('dark')?'dark':'light');
+  paintTheme();
+};
+
+/* WELCOME ANIMATION */
+const welcome='Selamat Datang Di raffz.vercel.app';
+let index=0,deleting=false;
+function typeWriter(){
+  $('typed').textContent=welcome.substring(0,index);
+  if(!deleting){index++;if(index>welcome.length){deleting=true;return setTimeout(typeWriter,1600)}}
+  else{index--;if(index<=0)deleting=false}
+  setTimeout(typeWriter,deleting?45:90);
+}
+typeWriter();
+
+/* CLOCK */
+function updateClock(){
+  const d=new Date();
+  $('clock').textContent=d.toLocaleDateString('id-ID')+' • '+d.toLocaleTimeString('id-ID');
+}
+updateClock();setInterval(updateClock,1000);
+
+/* BATTERY */
+if(navigator.getBattery){
+  navigator.getBattery().then(b=>{
+    const update=()=>$('battery').textContent=Math.round(b.level*100)+'%';
+    update();b.addEventListener('levelchange',update);
+  }).catch(()=>$('battery').textContent='N/A');
+}else $('battery').textContent='N/A';
+
+/* GET HTML — targeted update; other app code remains unchanged */
+let htmlFilename='website.html';
+let lastExtractUrl='';
+const extractStatusEl=$('extractStatus');
+function setExtractStatus(message){if(extractStatusEl)extractStatusEl.textContent=message;}
+function validExtractUrl(value){
+  try{const u=new URL(value);return (u.protocol==='http:'||u.protocol==='https:')&&!u.username&&!u.password?u.href:'';}catch(_){return '';}
+}
+
+$('fetchBtn').onclick=async()=>{
+  const url=validExtractUrl($('urlInput').value.trim());
+  if(!url)return notify('Masukkan URL HTTP/HTTPS yang valid.','error');
+  const btn=$('fetchBtn');btn.disabled=true;btn.textContent='MENGAMBIL...';
+  setExtractStatus('Mencoba mengambil halaman melalui backend...');
+  try{
+    let html='';
+    try{
+      const api=await fetch('/api/fetch?url='+encodeURIComponent(url),{headers:{'Accept':'application/json'}});
+      if(!api.ok)throw new Error('Backend HTTP '+api.status);
+      const data=await api.json();html=data.html||'';
+    }catch(serverError){
+      // Browser fallback: only succeeds when the target explicitly permits CORS.
+      const direct=await fetch(url);if(!direct.ok)throw new Error('HTTP '+direct.status);
+      html=await direct.text();
+    }
+    if(!html.trim())throw new Error('Website tidak mengirim HTML.');
+    $('source').value=html;htmlFilename='website.html';lastExtractUrl=url;
+    setExtractStatus('HTML berhasil diambil. Tekan DOWNLOAD HASIL; sistem otomatis memilih HTML atau ZIP berdasarkan aset yang ditemukan.');
+    notify('HTML berhasil diambil!');
+  }catch(error){
+    console.error('Get HTML error:',error);
+    setExtractStatus('Gagal mengambil halaman: '+(error.message||'akses ditolak'));
+    notify('Gagal mengambil HTML. Pastikan backend aktif dan URL dapat diakses.','error');
+  }finally{btn.disabled=false;btn.textContent='AMBIL HTML';}
+};
+
+$('downloadResultBtn').onclick=async()=>{
+  const url=validExtractUrl($('urlInput').value.trim())||lastExtractUrl;
+  if(!url)return notify('Masukkan URL website terlebih dahulu.','error');
+  const btn=$('downloadResultBtn');btn.disabled=true;btn.textContent='MENYIAPKAN...';
+  setExtractStatus('Memeriksa aset website. Sistem akan memilih format unduhan secara otomatis...');
+  try{
+    const response=await fetch('/api/extract?url='+encodeURIComponent(url),{method:'GET'});
+    if(!response.ok){let detail='HTTP '+response.status;try{const data=await response.json();detail=data.error||detail;}catch(_){}throw new Error(detail);}
+    const blob=await response.blob();
+    if(!blob.size)throw new Error('Hasil unduhan kosong.');
+    const type=(response.headers.get('content-type')||'').toLowerCase();
+    const isZip=type.includes('application/zip')||type.includes('application/x-zip');
+    const filename=isZip?'website-extract.zip':'website.html';
+    const a=document.createElement('a');const objectUrl=URL.createObjectURL(blob);
+    a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),2000);
+    const message=isZip?'Aset website ditemukan. ZIP berhasil diunduh.':'Tidak ada aset eksternal yang perlu dikemas. HTML berhasil diunduh.';
+    setExtractStatus(message+' Periksa folder Download.');notify(isZip?'ZIP berhasil didownload!':'HTML berhasil didownload!');
+  }catch(error){
+    console.error('Download extraction error:',error);
+    setExtractStatus('Gagal membuat hasil: '+(error.message||'periksa konfigurasi Vercel'));
+    notify('Gagal mengunduh hasil. Pastikan API Vercel sudah ter-deploy.','error');
+  }finally{btn.disabled=false;btn.textContent='DOWNLOAD HASIL';}
+};
+
+/* COPY HTML */
+$('copyBtn').onclick=async()=>{
+  const source=$('source');const text=source.value;
+  if(!text.trim())return notify('Belum ada kode.','error');
+  try{
+    if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}
+    else{
+      const temp=document.createElement('textarea');temp.value=text;temp.setAttribute('readonly','');
+      temp.style.position='fixed';temp.style.left='-9999px';document.body.appendChild(temp);
+      temp.focus();temp.select();const copied=document.execCommand('copy');temp.remove();
+      if(!copied)throw new Error('Clipboard tidak tersedia');
+    }
+    source.setSelectionRange(0,0);notify('Kode berhasil disalin!','success');
+  }catch(error){console.error('Copy error:',error);notify('Gagal menyalin. Coba buka lewat browser HTTPS.','error');}
+};
+
+/* PREVIEW HTML */
+$('previewBtn').onclick=()=>{
+  $('preview').srcdoc=$('source').value;notify('Preview diperbarui!');
+};
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  limit,
+  where,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyA1NZaGdzP_eMR28eZkizEbG45tASCgXYk",
+  authDomain: "raffz-web.firebaseapp.com",
+  projectId: "raffz-web",
+  storageBucket: "raffz-web.firebasestorage.app",
+  messagingSenderId: "729333256197",
+  appId: "1:729333256197:web:8f3cd50a71680f46ad0c6c",
+  measurementId: "G-W059BHL264"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const provider=new GoogleAuthProvider();
+
+// UID tetap admin: hanya akun ini yang mendapat lencana biru.
+const ADMIN_UID='SCYtY1Fn3XMgPk3ulx2tJaEwQSr1';
+
+const $=id=>document.getElementById(id);
+
+let user=null;
+let profile=null;
+let profileMap={};
+let stopMessages=null;
+let stopUsers=null;
+let stopPresence=null;
+let stopDM=null;
+let stopConversations=null;
+let stopNotifications=null;
+let presenceTimer=null;
+let activePrivateUid=null;
+let activeConversationId=null;
+let memberCache=[];
+let enteringUserId=null;
+
+function status(id,message,error=false){
+  const target=$(id);
+  if(target){target.textContent=message;target.style.color=error?'#d33':'#16864a';}
+  if(id==='profileStatus'){
+    ['profileStatusLoggedIn','profileStatusAccount'].forEach(statusId=>{
+      const secondary=$(statusId);
+      if(secondary){secondary.textContent=message;secondary.style.color=error?'#d33':'#16864a';}
+    });
+  }
+}
+
+function avatarFallback(name){
+  return 'https://ui-avatars.com/api/?background=3988f5&color=fff&bold=true&name='+encodeURIComponent(name||'User');
+}
+
+/* HENTIKAN LISTENER */
+function stopListeners(){
+  if(stopMessages)stopMessages();
+  if(stopUsers)stopUsers();
+  if(stopPresence)stopPresence();
+  if(stopDM)stopDM();
+  if(stopConversations)stopConversations();
+  if(stopNotifications)stopNotifications();
+
+  stopMessages=null;
+  stopUsers=null;
+  stopPresence=null;
+  stopDM=null;
+  stopConversations=null;
+  stopNotifications=null;
+
+  if(presenceTimer)clearInterval(presenceTimer);
+  presenceTimer=null;
+}
+
+/* PROFIL */
+function isAdminAccount(){
+  return !!user && user.uid===ADMIN_UID;
+}
+
+function renderProfile(){
+  if(!profile||!user)return;
+
+  const name=profile.display_name||'Pengguna';
+  const avatar=profile.avatar_url||avatarFallback(name);
+
+  $('profilePreview').src=avatar;
+  $('profilePreview').onerror=()=>{
+    $('profilePreview').src=avatarFallback(name);
+  };
+
+  $('profileName').value=name;
+  $('profileEmail').value=user.email||'';
+  $('profileAvatar').value=profile.avatar_url||'';
+  $('profileBio').value=profile.bio||'';
+  $('signedInAs').replaceChildren(document.createTextNode(name));
+  if(isAdminAccount()){const verified=document.createElement('span');verified.className='verified';verified.setAttribute('aria-label','Akun terverifikasi');$('signedInAs').append(' ',verified);}
+}
+
+/* LOGIN GOOGLE */
+async function loginGoogle(button=$('googleLogin')){
+  const btn=button;
+  const originalText=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='MENGHUBUNGKAN KE GOOGLE...';
+
+  try{
+    await signInWithPopup(auth,provider);
+  }catch(error){
+    if(
+      error.code==='auth/popup-blocked'||
+      error.code==='auth/popup-closed-by-user'||
+      error.code==='auth/cancelled-popup-request'
+    ){
+      try{
+        await signInWithRedirect(auth,provider);
+        return;
+      }catch(redirectError){
+        const statusTarget=btn.id==='goLogin'?'profileStatus':'authStatus';
+        status(statusTarget,redirectError.message,true);
+      }
+    }else{
+      const statusTarget=btn.id==='goLogin'?'profileStatus':'authStatus';
+      status(statusTarget,error.message,true);
+    }
+
+    btn.disabled=false;
+    btn.textContent=originalText;
+  }
+}
+
+$('googleLogin').onclick=()=>loginGoogle($('googleLogin'));
+
+/* PROFILE SCREEN ACTIONS */
+$('profileUploadBtn').onclick=()=>$('profilePhotoFile').click();
+$('profileLogoutTop').onclick=()=>$('logoutBtn').click();
+$('profileThemeBtn').onclick=()=>$('themeBtn').click();
+$('profileRegister').onclick=()=>loginGoogle($('goLogin'));
+
+$('profileDeleteBtn').onclick=async()=>{
+  if(!user||!profile)return;
+  profile.pendingAvatar='';
+  $('profileAvatar').value='';
+  $('profilePreview').src=avatarFallback(profile.display_name||'Pengguna');
+  $('saveProfile').click();
+};
+
+/* Hide the legacy history area: this profile layout intentionally has no activity history. */
+
+
+/* TAMPILAN LOGIN */
+function showLoggedIn(){
+  $('logoutBtn').style.display='inline-flex';
+  $('profileLogoutTop').style.display='inline-flex';
+  $('authPanel').style.display='none';
+  $('chatPanel').style.display='block';
+  $('profileLocked').style.display='none';
+  $('profilePanel').style.display='block';
+}
+
+function showLoggedOut(){
+  $('logoutBtn').style.display='none';
+  $('profileLogoutTop').style.display='none';
+  user=null;
+  profile=null;
+  profileMap={};
+  enteringUserId=null;
+
+  stopListeners();
+
+  $('authPanel').style.display='block';
+  $('chatPanel').style.display='none';
+  $('profileLocked').style.display='block';
+  $('profilePanel').style.display='none';
+  $('chatMessages').innerHTML='';
+  $('privateRoomView').style.display='none';$('globalRoomView').style.display='block';
+
+  $('googleLogin').disabled=false;
+  $('googleLogin').textContent='LOGIN DENGAN GOOGLE';
+  $('authStatus').textContent='Belum login. Silakan masuk menggunakan Google.';
+
+  updateOnline(0);
+}
+
+/* BUAT / AMBIL PROFIL */
+async function loadProfile(){
+  const userRef=doc(db,'users',user.uid);
+  const snap=await getDoc(userRef);
+
+  if(snap.exists()){
+    profile=snap.data();
+  }else{
+    profile={
+      uid:user.uid,
+      display_name:(user.displayName||user.email?.split('@')[0]||'Pengguna').slice(0,24),
+      avatar_url:user.photoURL||'',
+      bio:'',
+      createdAt:serverTimestamp()
+    };
+
+    await setDoc(userRef,profile);
+  }
+
+  renderProfile();
+}
+
+/* MASUK APLIKASI */
+async function enterApp(currentUser){
+  if(!currentUser)return;
+  if(enteringUserId===currentUser.uid)return;
+
+  enteringUserId=currentUser.uid;
+  user=currentUser;
+
+  stopListeners();
+
+  try{
+    await loadProfile();
+
+    if(user?.uid!==currentUser.uid)return;
+
+    showLoggedIn();
+    startMessages();
+    startTotalUsers();
+    startPresence();
+    startBroadcastNotifications();
+
+  }catch(error){
+    console.error(error);
+    status('authStatus','Gagal memuat akun: '+error.message,true);
+    enteringUserId=null;
+  }
+}
+
+/* LOGOUT */
+$('logoutBtn').onclick=async()=>{
+  $('logoutBtn').disabled=true;
+
+  try{
+    if(user){
+      await setDoc(doc(db,'presence',user.uid),{
+        online:false,
+        updatedAt:serverTimestamp()
+      },{merge:true});
+    }
+
+    await signOut(auth);
+    notify('Berhasil logout!');
+  }catch(error){
+    status('chatStatus',error.message,true);
+  }
+
+  $('logoutBtn').disabled=false;
+};
+
+/* PILIH FOTO PROFIL DARI GALERI */
+$('profilePhotoFile').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){status('profileStatus','Pilih file gambar. ',true);return;}
+  if(file.size>8*1024*1024){status('profileStatus','Foto maksimal 8 MB.',true);return;}
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);
+    });
+    const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=dataUrl;});
+    const canvas=document.createElement('canvas');
+    const scale=Math.min(1,480/Math.max(image.width,image.height));
+    canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));
+    canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+    profile.pendingAvatar=canvas.toDataURL('image/jpeg',0.72);
+    $('profilePreview').src=profile.pendingAvatar;
+    $('profileAvatar').value='';
+    status('profileStatus','Foto sedang disimpan...');
+    $('saveProfile').click();
+  }catch(error){status('profileStatus','Foto gagal diproses: '+error.message,true);}
+});
+
+/* SIMPAN PROFIL */
+$('saveProfile').onclick=async()=>{
+  if(!user)return;
+
+  const display_name=$('profileName').value.trim();
+  const avatar_url=Object.prototype.hasOwnProperty.call(profile,'pendingAvatar')?profile.pendingAvatar:($('profileAvatar').value.trim()||profile.avatar_url||'');
+  const bio=$('profileBio').value.trim();
+
+  if(!display_name)return status('profileStatus','Nama tidak boleh kosong.',true);
+  if(display_name.length>24)return status('profileStatus','Nama maksimal 24 karakter.',true);
+
+  const btn=$('saveProfile');
+  btn.disabled=true;
+
+  try{
+    const newProfile={
+      ...profile,
+      pendingAvatar:null,
+      uid:user.uid,
+      display_name,
+      avatar_url,
+      bio,
+      updatedAt:serverTimestamp()
+    };
+
+    await setDoc(doc(db,'users',user.uid),newProfile,{merge:true});
+
+    profile={
+      ...newProfile,
+      pendingAvatar:null,
+      updatedAt:null
+    };
+    $('profilePhotoFile').value='';
+
+    profileMap[user.uid]=profile;
+    renderProfile();
+
+    status('profileStatus','Profil berhasil disimpan!');
+    notify('Profil berhasil diperbarui!');
+
+  }catch(error){
+    status('profileStatus',error.message,true);
+  }finally{
+    btn.disabled=false;
+  }
+};
+
+/* AMBIL PROFIL PENGIRIM */
+async function getProfiles(ids){
+  const unique=[...new Set(ids.filter(Boolean))];
+
+  await Promise.all(unique.map(async uid=>{
+    if(profileMap[uid])return;
+
+    const snap=await getDoc(doc(db,'users',uid));
+
+    if(snap.exists()){
+      profileMap[uid]=snap.data();
+    }
+  }));
+}
+
+/* TAMPILKAN PESAN */
+let globalReplyTarget=null;
+let dmReplyTarget=null;
+let pendingDmAttachment=null;
+
+function replySummary(message){
+  const sender=profileMap[message.uid]||{};
+  const name=message.uid===ADMIN_UID?(sender.display_name||'Raffz'):(sender.display_name||'Pengguna');
+  return {id:message.id||'',uid:message.uid||message.senderUid||'',name,content:(message.content||message.attachment?.name||'Lampiran').slice(0,140)};
+}
+function setReplyTarget(mode,message){
+  const target=replySummary(message);
+  if(mode==='dm'){
+    dmReplyTarget=target;
+    $('dmReplyText').textContent=target.name+': '+target.content;
+    $('dmReplyPreview').hidden=false;
+    $('privateText').focus();
+  }else{
+    globalReplyTarget=target;
+    $('globalReplyText').textContent=target.name+': '+target.content;
+    $('globalReplyPreview').hidden=false;
+    $('chatText').focus();
+  }
+}
+function cancelReply(mode){
+  if(mode==='dm'){dmReplyTarget=null;$('dmReplyPreview').hidden=true;}
+  else{globalReplyTarget=null;$('globalReplyPreview').hidden=true;}
+}
+$('globalReplyCancel').onclick=()=>cancelReply('global');
+$('dmReplyCancel').onclick=()=>cancelReply('dm');
+
+function enableSwipeReply(element,message,mode){
+  let startX=0,startY=0;
+  element.classList.add('swipe-ready');
+  element.addEventListener('touchstart',event=>{
+    const touch=event.touches[0];startX=touch.clientX;startY=touch.clientY;
+  },{passive:true});
+  element.addEventListener('touchend',event=>{
+    const touch=event.changedTouches[0];
+    const dx=touch.clientX-startX,dy=touch.clientY-startY;
+    if(dx>58&&Math.abs(dy)<48){
+      element.animate([{transform:'translateX(0)'},{transform:'translateX(24px)'},{transform:'translateX(0)'}],{duration:220});
+      setReplyTarget(mode,message);
+    }
+  },{passive:true});
+}
+function appendMessageAttachment(item,attachment){
+  if(!attachment?.dataUrl)return;
+  if(attachment.type?.startsWith('image/')){
+    const image=document.createElement('img');image.className='msg-attachment image';
+    image.src=attachment.dataUrl;image.alt=attachment.name||'Foto';item.append(image);
+  }else{
+    const link=document.createElement('a');link.className='msg-attachment-file';
+    link.href=attachment.dataUrl;link.download=attachment.name||'file';
+    const icon=document.createElement('span');icon.textContent='📄';
+    const label=document.createElement('span');label.textContent=attachment.name||'Unduh file';
+    link.append(icon,label);item.append(link);
+  }
+}
+function appendReplyQuote(item,reply,mode){
+  if(!reply)return;
+  const quote=document.createElement('div');quote.className='reply-quote';
+  const who=document.createElement('strong');who.textContent='Membalas '+(reply.name||'Pesan');
+  const snippet=document.createElement('span');snippet.textContent=reply.content||'Pesan';
+  quote.append(who,snippet);
+  quote.onclick=()=>{
+    const box=$(mode==='dm'?'privateMessages':'chatMessages');
+    const target=box.querySelector('[data-message-id="'+CSS.escape(reply.id||'')+'"]');
+    if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('highlight-message');setTimeout(()=>target.classList.remove('highlight-message'),1200);}
+  };
+  item.append(quote);
+}
+function addMessage(message){
+  const box=$('chatMessages');
+  box.querySelector('[data-empty]')?.remove();
+  const sender=profileMap[message.uid]||{};
+  const senderIsAdmin=message.uid===ADMIN_UID;
+  const mine=message.uid===user?.uid;
+  const name=sender.display_name|| (senderIsAdmin?'Raffz':'Pengguna');
+  const avatar=sender.avatar_url||avatarFallback(name);
+  const item=document.createElement('div');
+  item.className='msg'+(mine?' mine':'')+(senderIsAdmin?' admin-message':'');
+  item.dataset.messageId=message.id||'';
+  const head=document.createElement('div');head.className='chat-head';
+  const img=document.createElement('img');img.className='chat-avatar';img.src=avatar;img.alt='';
+  img.onerror=()=>img.src=avatarFallback(name);
+  img.style.cursor=mine?'default':'pointer';if(!mine)img.onclick=()=>openPrivateChat(message.uid);
+  const details=document.createElement('div');
+  const nameEl=document.createElement('div');nameEl.className='chat-name';
+  nameEl.textContent=name;
+  if(senderIsAdmin){nameEl.classList.add('admin-name');const verified=document.createElement('span');verified.className='verified';verified.setAttribute('aria-label','Akun terverifikasi');nameEl.append(' ',verified);}
+  if(!mine){nameEl.style.cursor='pointer';nameEl.onclick=()=>openPrivateChat(message.uid);}
+  const time=document.createElement('div');time.className='chat-time';
+  time.textContent=message.createdAt?.toDate?message.createdAt.toDate().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
+  details.append(nameEl,time);head.append(img,details);item.append(head);
+  appendReplyQuote(item,message.replyTo,'global');
+  if(message.content){const content=document.createElement('div');content.className='msg-content';content.textContent=message.content;item.append(content);}
+  appendMessageAttachment(item,message.attachment);
+  enableSwipeReply(item,message,'global');
+  box.append(item);box.scrollTop=box.scrollHeight;
+}
+
+/* CHAT REALTIME */
+function startMessages(){
+  $('chatMessages').innerHTML='<div class="msg" data-empty>Memuat pesan...</div>';
+
+  const q=query(
+    collection(db,'messages'),
+    orderBy('createdAt','desc'),
+    limit(100)
+  );
+
+  stopMessages=onSnapshot(q,async snapshot=>{
+    try{
+      const messages=snapshot.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      })).reverse();
+
+      await getProfiles(messages.map(m=>m.uid));
+
+      $('chatMessages').innerHTML='';
+
+      if(!messages.length){
+        $('chatMessages').innerHTML='<div class="msg" data-empty>Belum ada pesan. Mulai obrolan!</div>';
+        return;
+      }
+
+      messages.forEach(addMessage);
+    }catch(error){
+      status('chatStatus',error.message,true);
+    }
+  },error=>{
+    status('chatStatus',error.message,true);
+  });
+
+  status('chatStatus','Global Chat terhubung realtime.');
+}
+
+/* KIRIM PESAN */
+async function sendMessage(){
+  if(!user)return;
+
+  const input=$('chatText');
+  const content=input.value.trim();
+
+  if(!content&&!pendingAttachment)return;
+
+  const btn=$('sendBtn');
+  btn.disabled=true;
+
+  try{
+    await addDoc(collection(db,'messages'),{
+      uid:user.uid,
+      content,
+      ...(pendingAttachment?{attachment:pendingAttachment}:{}),
+      ...(globalReplyTarget?{replyTo:globalReplyTarget}:{}),
+      isAdmin:isAdminAccount(),
+      createdAt:serverTimestamp()
+    });
+
+    input.value='';
+    pendingAttachment=null;
+    $('chatText').placeholder='Ketik pesan...';
+    $('photoInput').value='';
+    $('fileInput').value='';
+    cancelReply('global');
+  }catch(error){
+    status('chatStatus',error.message,true);
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+$('sendBtn').onclick=sendMessage;
+$('chatText').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey)sendMessage();
+});
+
+let pendingAttachment=null;
+$('attachBtn').onclick=()=> $('attachMenu').classList.toggle('open');
+$('photoPickBtn').onclick=()=>{$('attachMenu').classList.remove('open');$('photoInput').click()};
+$('filePickBtn').onclick=()=>{$('attachMenu').classList.remove('open');$('fileInput').click()};
+
+function readAttachment(file,mode='global'){
+  if(!file)return;
+  if(file.size>250*1024){
+    notify('Ukuran file maksimal 250 KB agar chat tetap ringan.','error');
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const attachment={name:file.name,type:file.type||'application/octet-stream',dataUrl:reader.result};
+    if(mode==='dm'){pendingDmAttachment=attachment;$('privateText').placeholder='Lampiran: '+file.name;}
+    else{pendingAttachment=attachment;$('chatText').placeholder='Lampiran: '+file.name;}
+    notify('Lampiran siap dikirim.');
+  };
+  reader.onerror=()=>notify('File gagal dibaca.','error');
+  reader.readAsDataURL(file);
+}
+$('photoInput').onchange=e=>readAttachment(e.target.files[0],'global');
+$('fileInput').onchange=e=>readAttachment(e.target.files[0],'global');
+$('dmAttachBtn').onclick=()=> $('dmAttachMenu').classList.toggle('open');
+$('dmPhotoPickBtn').onclick=()=>{$('dmAttachMenu').classList.remove('open');$('dmPhotoInput').click()};
+$('dmFilePickBtn').onclick=()=>{$('dmAttachMenu').classList.remove('open');$('dmFileInput').click()};
+$('dmPhotoInput').onchange=e=>readAttachment(e.target.files[0],'dm');
+$('dmFileInput').onchange=e=>readAttachment(e.target.files[0],'dm');
+
+/* PRIVATE CHAT DIBUKA DARI NAMA/FOTO PENGGUNA DI GLOBAL CHAT */
+function conversationIdFor(uidA,uidB){return [uidA,uidB].sort().join('__');}
+
+async function openPrivateChat(otherUid){
+  if(!user||!otherUid||otherUid===user.uid)return;
+  goPage('chatroom');
+  try{
+    await getProfiles([otherUid]);
+    const person=profileMap[otherUid]||{};
+    activePrivateUid=otherUid;
+    activeConversationId=conversationIdFor(user.uid,otherUid);
+    $('privateName').textContent=person.display_name||'Pengguna';
+    $('privateAvatar').src=person.avatar_url||avatarFallback(person.display_name);
+    $('globalRoomView').style.display='none';
+    $('privateRoomView').style.display='block';
+    $('privateMessages').innerHTML='<div class="msg">Memuat pesan...</div>';
+    if(stopDM)stopDM();
+    const messagesQuery=query(collection(db,'dmConversations',activeConversationId,'messages'),orderBy('createdAt','asc'),limit(100));
+    stopDM=onSnapshot(messagesQuery,snapshot=>{
+      const box=$('privateMessages');box.innerHTML='';
+      if(snapshot.empty){box.innerHTML='<div class="msg">Belum ada pesan. Sapa dulu 👋</div>';return;}
+      snapshot.forEach(docSnap=>{
+        const data={id:docSnap.id,...docSnap.data()};const mine=data.senderUid===user.uid;
+        const bubble=document.createElement('div');bubble.className='msg'+(mine?' mine':'');bubble.dataset.messageId=data.id;
+        const head=document.createElement('div');head.className='chat-head';
+        const name=document.createElement('div');name.className='chat-name';name.textContent=mine?'Kamu':(person.display_name||'Pengguna');
+        const time=document.createElement('div');time.className='chat-time';time.textContent=data.createdAt?.toDate?data.createdAt.toDate().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
+        head.append(name,time);bubble.append(head);
+        appendReplyQuote(bubble,data.replyTo,'dm');
+        if(data.content){const content=document.createElement('div');content.className='msg-content';content.textContent=data.content;bubble.append(content);}
+        appendMessageAttachment(bubble,data.attachment);
+        enableSwipeReply(bubble,data,'dm');
+        box.append(bubble);
+      });
+      box.scrollTop=box.scrollHeight;
+    },error=>notify('Gagal memuat pesan pribadi: '+error.message,'error'));
+  }catch(error){notify('Tidak bisa membuka chat: '+error.message,'error');}
+}
+
+$('backFromPrivate').onclick=()=>{
+  if(stopDM)stopDM();stopDM=null;activePrivateUid=null;activeConversationId=null;
+  $('privateRoomView').style.display='none';$('globalRoomView').style.display='block';
+};
+
+async function sendPrivateMessage(){
+  if(!user||!activePrivateUid||!activeConversationId)return;
+  const input=$('privateText');const content=input.value.trim();if(!content&&!pendingDmAttachment)return;
+  $('privateSendBtn').disabled=true;
+  try{
+    const conversationRef=doc(db,'dmConversations',activeConversationId);
+    const lastText=content||(pendingDmAttachment?.name||'Lampiran');
+    await setDoc(conversationRef,{participants:[user.uid,activePrivateUid].sort(),lastMessage:lastText.slice(0,120),updatedAt:serverTimestamp()},{merge:true});
+    await addDoc(collection(db,'dmConversations',activeConversationId,'messages'),{
+      senderUid:user.uid,content,
+      ...(pendingDmAttachment?{attachment:pendingDmAttachment}:{}),
+      ...(dmReplyTarget?{replyTo:dmReplyTarget}:{}),
+      createdAt:serverTimestamp()
+    });
+    input.value='';pendingDmAttachment=null;input.placeholder='Ketik pesan pribadi...';
+    $('dmPhotoInput').value='';$('dmFileInput').value='';cancelReply('dm');
+  }catch(error){
+    console.error('Private chat send failed:',error);
+    if(error.code==='permission-denied'){
+      notify('Firebase menolak pesan. Periksa Firestore Rules dmConversations dan subkoleksi messages.','error');
+    }else{
+      notify('Pesan gagal dikirim: '+error.message,'error');
+    }
+  }
+  finally{$('privateSendBtn').disabled=false;}
+}
+$('privateSendBtn').onclick=sendPrivateMessage;
+$('privateText').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey)sendPrivateMessage();});
+
+/* TOTAL PENGGUNA */
+function startTotalUsers(){
+  stopUsers=onSnapshot(collection(db,'users'),snapshot=>{
+    $('totalUsers').textContent=snapshot.size.toLocaleString('id-ID');
+    snapshot.docs.forEach(item=>{profileMap[item.id]={uid:item.id,...item.data()};});
+  },error=>{
+    console.error('Total users:',error);
+    $('totalUsers').textContent='—';
+  });
+}
+
+/* USER ONLINE */
+function updateOnline(count){
+  $('onlineCount').textContent=count;
+  $('chatOnline').textContent=count+' online';
+}
+
+async function updatePresence(){
+  if(!user)return;
+
+  try{
+    await setDoc(doc(db,'presence',user.uid),{
+      online:true,
+      updatedAt:serverTimestamp()
+    },{merge:true});
+  }catch(error){
+    console.error('Presence:',error);
+  }
+}
+
+function startPresence(){
+  updatePresence();
+
+  presenceTimer=setInterval(updatePresence,15000);
+
+  stopPresence=onSnapshot(collection(db,'presence'),snapshot=>{
+    const now=Date.now();
+    let count=0;
+
+    snapshot.forEach(item=>{
+      const data=item.data();
+      const updated=data.updatedAt?.toDate?.()?.getTime()||0;
+
+      if(data.online&&now-updated<45000)count++;
+    });
+
+    updateOnline(count);
+  },error=>{
+    console.error('Presence listener:',error);
+  });
+
+  window.addEventListener('pagehide',()=>{
+    if(user){
+      setDoc(doc(db,'presence',user.uid),{
+        online:false,
+        updatedAt:serverTimestamp()
+      },{merge:true}).catch(()=>{});
+    }
+  });
+}
+
+
+/* NOTIFIKASI GLOBAL UNTUK SEMUA USER */
+function formatNotificationTime(value){
+  const date=value?.toDate?.();
+  if(!date)return 'Baru saja';
+  return date.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});
+}
+
+function renderBroadcastNotifications(rows){
+  const list=$('notificationList');
+  if(!list)return;
+  list.replaceChildren();
+  if(!rows.length){
+    const empty=document.createElement('p');
+    empty.className='notification-empty';
+    empty.textContent='Belum ada notifikasi.';
+    list.append(empty);
+    $('notificationBadge').hidden=true;
+    return;
+  }
+
+  rows.forEach(item=>{
+    const card=document.createElement('article');
+    card.className='notification-item';
+    const title=document.createElement('strong');
+    title.textContent='Pengumuman';
+    const message=document.createElement('p');
+    message.textContent=item.message||'';
+    const time=document.createElement('small');
+    time.textContent=formatNotificationTime(item.createdAt);
+    card.append(title,message,time);
+    list.append(card);
+  });
+  const badge=$('notificationBadge');
+  badge.textContent=String(Math.min(rows.length,99));
+  badge.hidden=false;
+}
+
+function startBroadcastNotifications(){
+  if(!user)return;
+  const notificationsQuery=query(
+    collection(db,'broadcastNotifications'),
+    orderBy('createdAt','desc'),
+    limit(30)
+  );
+  stopNotifications=onSnapshot(notificationsQuery,snapshot=>{
+    const rows=snapshot.docs.map(item=>({id:item.id,...item.data()}));
+    renderBroadcastNotifications(rows);
+  },error=>{
+    console.error('Broadcast notifications:',error);
+    $('notificationList').innerHTML='<p class="notification-empty">Tidak dapat memuat notifikasi. Periksa Firestore Rules.</p>';
+  });
+}
+
+function openNotificationDialog(){
+  if(!user){
+    notify('Silakan login untuk melihat notifikasi.','error');
+    return;
+  }
+  $('notificationOverlay').hidden=false;
+  $('adminBroadcastForm').hidden=!isAdminAccount();
+  $('broadcastStatus').textContent='';
+  $('broadcastMessage').value='';
+}
+
+$('openNotifications').addEventListener('click',openNotificationDialog);
+$('closeNotifications').addEventListener('click',()=>$('notificationOverlay').hidden=true);
+$('notificationOverlay').addEventListener('click',event=>{
+  if(event.target===$('notificationOverlay'))$('notificationOverlay').hidden=true;
+});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&$('notificationOverlay'))$('notificationOverlay').hidden=true;
+});
+
+$('sendBroadcastBtn').addEventListener('click',async()=>{
+  if(!user||!isAdminAccount()){
+    $('broadcastStatus').textContent='Akses ditolak. Hanya admin yang dapat mengirim.';
+    return;
+  }
+  const message=$('broadcastMessage').value.trim();
+  if(!message){
+    $('broadcastStatus').textContent='Isi notifikasi wajib diisi.';
+    return;
+  }
+
+  const button=$('sendBroadcastBtn');
+  button.disabled=true;
+  button.textContent='MENGIRIM...';
+  try{
+    await addDoc(collection(db,'broadcastNotifications'),{
+      message,
+      senderUid:user.uid,
+      senderName:profile?.display_name||'Admin',
+      createdAt:serverTimestamp()
+    });
+    $('broadcastMessage').value='';
+    $('broadcastStatus').textContent='Notifikasi berhasil dikirim ke semua user.';
+  }catch(error){
+    console.error('Send broadcast:',error);
+    $('broadcastStatus').textContent='Gagal mengirim notifikasi: '+error.message+'. Periksa Firestore Rules broadcastNotifications.';
+  }finally{
+    button.disabled=false;
+    button.textContent='KIRIM KE SEMUA USER';
+  }
+});
+
+
+/* LOGIN STATE */
+onAuthStateChanged(auth,async currentUser=>{
+  if(currentUser){
+    await enterApp(currentUser);
+  }else{
+    showLoggedOut();
+  }
+});
+
+/* LOGIN REDIRECT */
+getRedirectResult(auth).catch(error=>{
+  status('authStatus',error.message,true);
+});
+</script>
+<script>
+
+/* Prevent browser pinch gestures from zooming the app UI. */
+['gesturestart','gesturechange','gestureend'].forEach(type => {
+  document.addEventListener(type, event => event.preventDefault(), {passive:false});
+});
+document.addEventListener('wheel', event => {
+  if (event.ctrlKey) event.preventDefault();
+}, {passive:false});
+
+</script>
+
+<script>
+/* BERITA INDONESIA: ANTARA + CNN INDONESIA + DETIK, maksimum 15 artikel */
+(() => {
+  const slider = document.getElementById('indoNewsSlider');
+  if (!slider) return;
+
+  const feeds = [
+    {name:'ANTARA', url:'https://www.antaranews.com/rss/terkini.xml'},
+    {name:'CNN INDONESIA', url:'https://www.cnnindonesia.com/rss'},
+    {name:'DETIKCOM', url:'https://news.detik.com/berita/rss'}
+  ];
+  const api = 'https://api.rss2json.com/v1/api.json?rss_url=';
+  const maxArticles = 15;
+  let articles = [];
+  let currentIndex = 0;
+  let refreshBusy = false;
+  let refreshTimer = null;
+
+  const statusEl = document.getElementById('indoNewsStatus');
+  const dotsEl = document.getElementById('indoNewsDots');
+  const progressEl = document.getElementById('indoNewsProgress');
+
+  function safeHttpUrl(value) {
+    try {
+      const url = new URL(value);
+      return (url.protocol === 'https:' || url.protocol === 'http:') ? url.href : '';
+    } catch (_) { return ''; }
+  }
+
+  function stripHtml(value) {
+    const node = document.createElement('div');
+    node.innerHTML = String(value || '');
+    return (node.textContent || node.innerText || '').replace(/\s+/g,' ').trim();
+  }
+
+  function extractImage(item) {
+    const enclosure = item.enclosure && (item.enclosure.link || item.enclosure.url);
+    const fromDescription = String(item.description || item.content || '').match(/<img[^>]+src=["']([^"']+)/i);
+    return safeHttpUrl(item.thumbnail || enclosure || (fromDescription && fromDescription[1]) || '');
+  }
+
+  function formatDate(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Waktu tidak tersedia';
+    return new Intl.DateTimeFormat('id-ID', {
+      day:'2-digit', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit', timeZone:'Asia/Jakarta'
+    }).format(date) + ' WIB';
+  }
+
+  async function loadFeed(feed) {
+    const endpoint = api + encodeURIComponent(feed.url);
+    const response = await fetch(endpoint, {cache:'no-store'});
+    if (!response.ok) throw new Error(feed.name + ': HTTP ' + response.status);
+    const data = await response.json();
+    if (data.status !== 'ok' || !Array.isArray(data.items)) {
+      throw new Error(data.message || 'Feed ' + feed.name + ' tidak tersedia');
+    }
+    return data.items.map(item => {
+      const link = safeHttpUrl(item.link);
+      const title = stripHtml(item.title);
+      const published = new Date(item.pubDate || item.published || 0);
+      if (!link || !title) return null;
+      return {
+        id: item.guid || link,
+        title,
+        link,
+        source: feed.name,
+        image: extractImage(item),
+        date: Number.isNaN(published.getTime()) ? 0 : published.getTime()
+      };
+    }).filter(Boolean);
+  }
+
+  function render() {
+    slider.replaceChildren();
+    dotsEl.replaceChildren();
+
+    if (!articles.length) {
+      slider.innerHTML = '<div class="news-error">Berita belum tersedia. Periksa koneksi internet lalu coba muat ulang.</div>';
+      progressEl.style.width = '0%';
+      return;
+    }
+
+    articles.forEach((article, index) => {
+      const card = document.createElement('a');
+      card.className = 'news-card';
+      card.href = article.link;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.setAttribute('aria-label', 'Buka berita: ' + article.title);
+
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'news-image-wrap';
+      if (article.image) {
+        const img = document.createElement('img');
+        img.className = 'news-image';
+        img.src = article.image;
+        img.alt = '';
+        img.loading = index < 2 ? 'eager' : 'lazy';
+        img.referrerPolicy = 'no-referrer';
+        img.onerror = () => {
+          imageWrap.replaceChildren();
+          const fallback = document.createElement('span');
+          fallback.className = 'news-no-image';
+          fallback.textContent = '📰';
+          imageWrap.appendChild(fallback);
+        };
+        imageWrap.appendChild(img);
+      } else {
+        const fallback = document.createElement('span');
+        fallback.className = 'news-no-image';
+        fallback.textContent = '📰';
+        imageWrap.appendChild(fallback);
+      }
+
+      const copy = document.createElement('div');
+      copy.className = 'news-copy';
+      const source = document.createElement('span');
+      source.className = 'news-source';
+      source.textContent = article.source;
+      const headline = document.createElement('strong');
+      headline.className = 'news-headline';
+      headline.textContent = article.title;
+      const meta = document.createElement('span');
+      meta.className = 'news-meta';
+      meta.textContent = formatDate(article.date);
+      copy.append(source, headline, meta);
+      card.append(imageWrap, copy);
+      slider.appendChild(card);
+
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'news-dot' + (index === currentIndex ? ' active' : '');
+      dot.setAttribute('aria-label', 'Berita ' + (index + 1));
+      dot.addEventListener('click', () => {
+        slider.scrollTo({left: index * slider.clientWidth, behavior:'smooth'});
+      });
+      dotsEl.appendChild(dot);
+    });
+
+    currentIndex = Math.min(currentIndex, articles.length - 1);
+    updateSliderState();
+  }
+
+  function updateSliderState() {
+    if (!articles.length) return;
+    const width = slider.clientWidth || 1;
+    currentIndex = Math.max(0, Math.min(articles.length - 1, Math.round(slider.scrollLeft / width)));
+    [...dotsEl.children].forEach((dot, index) => dot.classList.toggle('active', index === currentIndex));
+    progressEl.style.width = (((currentIndex + 1) / articles.length) * 100) + '%';
+    const activeDot = dotsEl.children[currentIndex];
+    if (activeDot) activeDot.scrollIntoView({block:'nearest',inline:'nearest'});
+  }
+
+  async function refreshNews() {
+    if (refreshBusy) return;
+    refreshBusy = true;
+    statusEl.textContent = 'Memperbarui berita...';
+    try {
+      const results = await Promise.allSettled(feeds.map(loadFeed));
+      const fresh = results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
+      if (!fresh.length) throw new Error('Semua sumber berita sedang tidak bisa diakses.');
+
+      const unique = new Map();
+      [...articles, ...fresh].forEach(article => {
+        if (!unique.has(article.link)) unique.set(article.link, article);
+      });
+      articles = [...unique.values()]
+        .sort((a,b) => b.date - a.date)
+        .slice(0, maxArticles);
+
+      currentIndex = 0;
+      render();
+      const failed = results.filter(result => result.status === 'rejected').length;
+      statusEl.textContent = 'Maks. 15 berita • ' + articles.length + ' berita' +
+        (failed ? ' • ' + failed + ' sumber tidak tersedia' : '') +
+        ' • diperbarui ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    } catch (error) {
+      console.warn('News refresh:', error);
+      statusEl.textContent = 'Berita gagal dimuat • tekan ↻ untuk mencoba lagi';
+      if (!articles.length) {
+        slider.innerHTML = '<div class="news-error">Tidak dapat memuat berita saat ini.<button type="button" id="indoNewsRetry">Coba lagi</button></div>';
+        document.getElementById('indoNewsRetry')?.addEventListener('click', refreshNews);
+      }
+    } finally {
+      refreshBusy = false;
+    }
+  }
+
+  slider.addEventListener('scroll', () => {
+    window.requestAnimationFrame(updateSliderState);
+  }, {passive:true});
+  document.getElementById('indoNewsRefresh').addEventListener('click', refreshNews);
+
+  refreshNews();
+  refreshTimer = window.setInterval(refreshNews, 10 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      // Recheck when the visitor returns after a long time.
+      refreshNews();
+    }
+  });
+})();
+</script>
+
+
+<div class="notification-overlay" id="notificationOverlay" hidden>
+  <section class="notification-dialog" role="dialog" aria-modal="true" aria-labelledby="notificationTitle">
+    <div class="notification-dialog-head">
+      <h2 id="notificationTitle">Notifikasi</h2>
+      <button type="button" class="notification-close" id="closeNotifications" aria-label="Tutup">×</button>
+    </div>
+    <div id="adminBroadcastForm" class="admin-broadcast-form" hidden>
+      <p class="notification-admin-label">KIRIM PENGUMUMAN KE SEMUA USER</p>
+      <label for="broadcastMessage">Isi pesan</label>
+      <textarea id="broadcastMessage" maxlength="700" rows="4" placeholder="Tulis pesan untuk semua pengguna..."></textarea>
+      <button type="button" id="sendBroadcastBtn" class="broadcast-send-btn">KIRIM KE SEMUA USER</button>
+      <p id="broadcastStatus" class="notification-status" aria-live="polite"></p>
+      <div class="notification-divider"></div>
+    </div>
+    <div id="notificationList" class="notification-list">
+      <p class="notification-empty">Memuat notifikasi...</p>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>
